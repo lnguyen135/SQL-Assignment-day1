@@ -1,0 +1,249 @@
+--Assignment 2 SQL
+Joins:
+--(AdventureWorks)
+
+USE AdventureWorks2019
+GO
+
+USE Northwind
+GO
+
+
+--1. Write a query that lists the country and province names from person. CountryRegion and person. StateProvince tables. Join them and produce a result set similar to the
+following.
+
+   -- Country                        Province
+
+select p.name AS [Country] , s.name AS [Provine] 
+FROM person. CountryRegion p  JOIN person. StateProvince s ON p.CountryRegionCode = s.CountryRegionCode
+
+
+
+--2. Write a query that lists the country and province names from person. CountryRegion and person. StateProvince tables and list the countries filter them by Germany and Canada.
+--Join them and produce a result set similar to the following.
+
+  --  Country                     --   Province
+
+-- Using Northwind Database: (Use aliases for all the Joins)
+
+select p.name AS [Country] , s.name AS [Provine] 
+FROM person. CountryRegion p  JOIN person. StateProvince s ON p.CountryRegionCode = s.CountryRegionCode WHERE p.name ='Germany' or p.name = 'Canada'
+
+
+--3. List all Products that has been sold at least once in last 25 years.
+
+SELECT o.OrderDate, p.productID, COUNT(o.OrderID) as NumOfOrders FROM Orders o   JOIN dbo.[Order Details] p ON o.orderID = p.orderID 
+WHERE o.OrderDate >= 1997
+GROUP BY o.OrderDate, p.productID
+ORDER BY NumOfOrders DESC,  o.OrderDate DESC
+
+4. List top 5 locations (Zip Code) where the products sold most in last 25 years.
+
+SELECT Top 5  o.ShipPostalCode , p.ProductName
+FROM orders o JOIN  dbo.[Order Details] d ON o.orderID = d.orderID JOIN dbo.Products p ON p.productID = d.productID
+WHERE o.OrderDate >= 1997
+group BY  o.ShipPostalCode , p.productName
+ORDER BY o.ShipPostalCode DESC
+
+5. List all city names and number of customers in that city. 
+
+SELECT city, COUNT(ContactName) AS totalNumOfCustomers
+FROM Customers
+GROUP BY city
+ORDER BY totalNumOfCustomers DESC
+
+6. LIST city NAMES which have more than 2 customers, AND number OF customers IN that city
+
+SELECT city, COUNT(ContactName) AS totalNumOfCustomers
+FROM Customers
+GROUP BY city 
+HAVING COUNT(ContactName) >= 2
+ORDER BY totalNumOfCustomers  DESC
+
+
+7. Display the NAMES OF ALL customers  along WITH the  COUNT OF products they bought
+
+SELECT c.contactName, count (od.productID) AS NumOfProducts FROM dbo.Customers c   INNER JOIN dbo.[Orders]  o ON c.customerID = o.customerID 
+JOIN dbo.[Order Details] od ON o.OrderID = od.OrderID
+GROUP BY c.contactName 
+ORDER BY  NumOfProducts DESC
+
+8. Display the customer ids who bought more than 100 Products WITH count OF products.
+
+SELECT c.contactName, count (od.productID) AS NumOfProducts FROM dbo.Customers c   INNER JOIN dbo.[Orders]  o ON c.customerID = o.customerID 
+JOIN dbo.[Order Details] od ON o.OrderID = od.OrderID
+GROUP BY c.contactName 
+HAVING count (od.productID) >= 100
+ORDER BY  NumOfProducts, c.contactName DESC
+
+9. LIST ALL OF the possible ways that suppliers can ship their products. Display the results AS below
+
+    Supplier Company NAME                Shipping Company NAME
+    ---------------------------------            ----------------------------------
+	
+	SELECT s.CompanyName AS [Supplier Company Name]
+	, su.companyName AS[ Shipping Company Name]
+	FROM shippers s cross JOIN dbo.Suppliers su 
+
+10. Display the products ORDER each DAY. Show ORDER date AND Product NAME.
+
+SELECT o.orderDate, p.productName  from orders o join dbo.[Order Details]od ON o.orderId = od.orderID JOIN products p 
+ON od.productID = p.productID
+
+11. Displays pairs OF employees who have the same JOB title.
+
+SELECT  TOP 2  lastName, FirstName, title FROM dbo.Employees WHERE title IN('Sales Representative')  
+
+12. Display ALL the Managers who have more than 2 employees reporting TO them.
+
+SELECT EmployeeID, FirstName, ReportsTo 
+FROM Employees WHERE ReportsTo >2
+
+13. Display the customers AND suppliers BY city. The results should have the FOLLOWING COLUMNS
+
+City NAME
+Contact NAME,
+TYPE (Customer OR Supplier)
+
+
+
+SELECT c.City  AS [City Customers], c.ContactName, s.City AS [City suppliers], s.ContactName 
+FROM Customers c inner JOIN Suppliers s ON c.city = s.city
+
+SELECT City AS [Customer City], ContactName
+FROM Customers
+UNION 
+SELECT City AS [Suppliers City], ContactName
+FROM Suppliers
+
+ALL scenarios ARE based ON DATABASE NORTHWIND.
+
+14. LIST ALL cities that have BOTH Employees AND Customers.
+
+SELECT CustomerID, ContactName, City, Country
+FROM Customers 
+WHERE ContactName IN (
+    SELECT DISTINCT firstName + lastName
+    FROM dbo.Employees
+)
+	
+15. LIST ALL cities that have Customers but NO Employee.
+A. USE sub-query
+
+SELECT ContactName, City
+FROM Customers 
+WHERE ContactName  NOT IN (
+    SELECT DISTINCT firstName + lastName
+    FROM dbo.Employees
+)
+
+B. Do NOT USE sub-query
+SELECT e.City, e.firstName +' ' + e.lastName [full Name]
+FROM  employees e
+JOIN dbo.Customers c ON c.city = e.city
+WHERE  ContactName  NOT IN (e.firstName + e.lastName)
+    
+16. LIST ALL products AND their total ORDER quantities throughout ALL orders.
+
+SELECT  p.productName, count( od.Quantity) AS TotalOrderQuantities
+FROM [Order Details] od JOIN products p on od.ProductID = p.ProductID 
+GROUP BY p.productName
+
+
+17. LIST ALL Customer Cities that have AT least two customers.
+SELECT* FROM dbo.Customers
+
+A. USE UNION
+ SELECT city FROM dbo.Customers
+ WHERE EXISTS(
+SELECT  count(*) as TotalCustomers from
+ (
+ select distinct  customerId from dbo.Customers
+union
+select distinct  customerId from dbo.Customers
+--HAVING COUNT(*)>=2
+)Customers )
+
+SELECT city, CustomerID
+FROM customers  
+--WHERE city having COUNT(CustomerID) >2
+UNION
+(SELECT city, CustomerID
+FROM customers
+WHERE NOT city = ANY
+	(SELECT city
+        FROM customers))
+ORDER BY 2 DESC
+
+SELECT c.city, COUNT(c.CustomerID) AS totalNumOfCustomers
+FROM Customers c
+GROUP BY c.city 
+HAVING COUNT(c.CustomerID) >= 2
+ORDER BY totalNumOfCustomers  DESC
+
+
+    SELECT c.city, c.CustomerID
+    FROM dbo.Customers c
+    UNION 
+    SELECT c1.city, c1.CustomerID
+    FROM Customers c1 INNER JOIN Customers c ON c.CustomerID = c1.CustomerID
+    HAVING COUNT(c1.CustomerID)  >=2 
+	order BY COUNT(c.CustomerID) desc
+
+B. USE no UNION
+
+SELECT city, COUNT(ContactName) AS totalNumOfCustomers
+FROM Customers
+GROUP BY city 
+HAVING COUNT(ContactName) >= 2
+ORDER BY totalNumOfCustomers  DESC
+
+
+18. LIST ALL Customer Cities that have ordered AT least two different kinds OF products.
+
+WITH OrderCntCTE
+ AS
+(
+    SELECT DISTINCT CustomerID, COUNT (OrderID) NumOfOrders
+    FROM Orders 
+	GROUP BY CustomerID
+	HAVING COUNT(OrderID)>=2
+)
+SELECT DISTINCT c.ContactName, c.City, c.Country, cte.NumOfOrders
+FROM Customers c inner JOIN OrderCntCTE cte ON c.CustomerID = cte.CustomerID
+ORDER BY cte.NumOfOrders  desc
+
+19. LIST 5 most popular products, their average price, AND the customer city that ordered most quantity OF it.
+
+ SELECT TOP 5  od.ProductID, o.ShipCity, AVG(od.UnitPrice * od.Quantity) AS AvgPrive
+FROM [Order Details] od JOIN Orders o on o.OrderID = od.OrderID 
+GROUP BY od.ProductID, o.ShipCity
+ORDER BY AvgPrive desc
+
+20. LIST one city, IF EXISTS, that IS the city FROM WHERE the employee sold most orders 
+(NOT the product quantity) IS, AND also the city OF most total quantity OF products ordered
+FROM. (tip: JOIN  sub-query)
+
+SELECT TOP 1 o.shipCity, COUNT(o.orderID) AS totalOrder, od.productID, count(od.quantity)AS TotalQuantity
+FROM orders o JOIN dbo.[Order Details]od ON o.orderID = od.orderID
+GROUP BY o.shipCity,od.productID 
+ORDER BY totalOrder desc, TotalQuantity desc
+
+21. How do you REMOVE the duplicates record OF A TABLE?
+USE a common TABLE expression (CTE) TO DELETE duplicate ROWS
+
+Example: 
+WITH CTE([FirstName], 
+    [LastName], 
+    [Country], 
+    DuplicateCount)
+AS (SELECT [FirstName], 
+           [LastName], 
+           [Country], 
+           ROW_NUMBER() OVER(PARTITION BY [FirstName], 
+                                          [LastName], 
+                                          [Country]
+           ORDER BY ID) AS DuplicateCount
+    FROM [SampleDB].[dbo].[Employee])
+DELETE FROM CTE
+WHERE DuplicateCount > 1;
