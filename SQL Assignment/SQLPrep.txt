@@ -1,0 +1,98 @@
+SQL Prep
+1.	What is index; types of indices; pros and cons
+Indexes are special lookup tables that the database search engine can use to speed up data retrieval. Simply put, an index is a pointer to data in a table. An index in a database is very similar to an index in the back of a book.
+There are various types of indexes in SQL server: Clustered Index, Non-Clustered Index, Column Store Index, Filtered Index, Hash Index , Unique Index
+
+The advantage is better performance when using the index (mostly for reading, but also for updating other values when using the index).
+The disadvantage is slightly slower performance when adding or deleting records, or when updating the indexed columns.
+
+1.	What's the difference between Primary key and Unique constraint?
+Primary key will not accept NULL values whereas Unique key can accept NULL values. A table can have only one primary key whereas there can be multiple unique key on a table. A Clustered index automatically created when a primary key is defined whereas Unique key generates the non-clustered index
+2.	Tell me about check constraint
+A check constraint is a rule that specifies the values that are allowed in one or more columns of every row of a base table. For example, you can define a check constraint to ensure that all values in a column that contains ages are positive numbers.
+3.	Difference between temp table and table variable
+A Temp table is easy to create and back up data. Table variable involves the effort when you usually create the normal tables. Temp table result can be used by multiple users. Table variable can be used by the current user only
+5. Difference between WHERE and HAVING
+ If “Where” clause is used to filter the records from a table that is based on a specified condition, then the “Having” clause is used to filter the record from the groups based on the specified condition
+6. Difference between RANK() and DenseRank() — value gap
+RANK can have gaps in its sequence and when values are the same, they get the same rank. DENSE_RANK also returns the same rank for ties, but doesn't have any gaps in the sequence
+7. COUNT(*) vs. COUNT(colName)
+COUNT(*) will count all the rows in the table, including NULL values. On the other hand, COUNT(column name) will count all the rows in the specified column while excluding NULL values
+8. What's the difference between left join and inner join? 
+Use INNER JOIN to return only records having pair on both sides, use LEFT JOIN when we need all records from the “left” table, no matter if they have pair in the “right” table or not
+JOIN and Subquery, which one has a better performance, why?
+Join is more efficient in most cases, but there are cases in which constructs other than a subquery is not possible. While subqueries may be more readable for beginners, JOINs are more readable for experienced SQL coders as the queries become more complex
+9. What is correlated subquery
+A correlated subquery answers a multiple-part question whose answer depends on the value in each row processed by the parent statement. For example, you can use a correlated subquery to determine which employees earn more than the average salaries for their departments
+10. What is a CTE, why do we need CTE?
+CTE was introduced in SQL Server 2005, the common table expression (CTE) is a temporary named result set that you can reference within a SELECT, INSERT, UPDATE, or DELETE statement. You can also use a CTE in a CREATE a view, as part of the view's SELECT query
+11. What does SQL Profiler do?
+SQL Server Profiler is an interface to create and manage traces and analyze and replay trace results. Events are saved in a trace file that can later be analyzed or used to replay a specific series of steps when diagnosing a problem. SQL Trace and SQL Server Profiler are deprecated
+12. What is SQL injection, how to avoid SQL injection?
+The only sure way to prevent SQL Injection attacks is input validation and parametrized queries including prepared statements. The application code should never use the input directly. The developer must sanitize all input, not only web form inputs such as login forms.
+13. Difference between SP and user defined function? When to use SP when to use function?
+Functions are compiled and executed at run time. Stored procedures are stored in parsed and compiled state in the database. Only Select statements. DML statements like update & insert are not allowed
+ 
+14. Criteria of Union and Union all? Difference between UNION and UNION ALL
+UNION or UNION ALL have the same basic requirements of the data being combined:
+•	There must be the same number of columns retrieved in each SELECT statement to be combined.
+•	The columns retrieved must be in the same order in each SELECT statement.
+•	The columns retrieved must be of similar data types
+The only difference between Union and Union All is that Union extracts the rows that are being specified in the query while Union All extracts all the rows including the duplicates (repeated values) from both the queries
+15. Steps you take to improve SQL Queries
+10 Ways to Improve SQL Query Performance
+1.	Improve SQL Query Performance. ...
+2.	Avoid Multiple Joins in a Single Query. ...
+3.	Eliminate Cursors from the Query. ...
+4.	Avoid Use of Non-correlated Scalar Sub Query. ...
+5.	Avoid Multi-statement Table Valued Functions (TVFs) ...
+6.	Creation and Use of Indexes. ...
+7.	Understand the Data. ...
+8.	Create a Highly Selective Index.
+
+16. concurrency problem in transaction
+The nonrepeatable read concurrency problem occurs when one process reads data several times, and another process changes the same data between two read operations of the first process. Therefore, the values read by both read operations of the first process are different
+17. what is deadlock, how to prevent
+SQL Server deadlock is essentially a standoff between two processes that are competing for exclusive access to the same resource. Because only one process can use a resource at a time, performance slows until the deadlock is resolved
+Useful ways to avoid and minimize SQL Server deadlocks
+1.	Try to keep transactions short; this will avoid holding locks in a transaction for a long period of time.
+2.	Access objects in a similar logical manner in multiple transactions.
+3.	Create a covering index to reduce the possibility of a deadlock.
+
+18. what is normalization, 1NF - BCNF, benefits using normalization
+Normalization is the process to eliminate data redundancy and enhance data integrity in the table. Normalization also helps to organize the data in the database. It is a multi-step process that sets the data into tabular form and removes the duplicated data from the relational tables.
+1NF (First Normal Form) 2NF (Second Normal Form) 3NF (Third Normal Form) BCNF (Boyce-Codd Normal Form) 4NF (Fourth Normal Form)
+Benefits of Data Normalization
+•	Reduces redundant data.
+•	Provides data consistency within the database.
+•	More flexible database design.
+•	Higher database security.
+•	Better and quicker execution.
+•	Greater overall database organization.
+
+19. what are the system defined databases?
+System databases consist of Master, MSDB, TempDB, and Model. These databases will maintain and provide more information about the SQL server system like logins , databases , linked servers , jobs , schedules , reports , report data sources etc.
+
+20. composite key
+A composite key in SQL can be defined as a combination of multiple columns, and these columns are used to identify all the rows that are involved uniquely. Even though a single column can't identify any row uniquely, a combination of over one column can uniquely identify any record.
+
+21. candidate key
+Candidate key is a single key or a group of multiple keys that uniquely identify rows in a table. A Candidate key is a subset of Super keys and is devoid of any unnecessary attributes that are not important for uniquely identifying tuples. The value for the Candidate key is unique and non-null for all tuples.
+
+22. DDL vs. DML
+What is DDL and DML in SQL?
+DDL is Data Definition Language which is used to define data structures. For example: create table, alter table are instructions in SQL. DML: DML is Data Manipulation Language which is used to manipulate data itself. For example: insert, update, delete are instructions in SQL
+
+23. ACID property
+ACID is an acronym for four interdependent properties: Atomicity, Consistency, Isolation, and Durability. Much of the architecture of any modern relational database is founded on these properties. Understanding the ACID properties of a transaction is a prerequisite for understanding many facets of SQL Server.
+
+24. table scan vs. index scan
+Table scan means iterate over all table rows. Index scan means iterate over all index items, when item index meets search condition, table row is retrived through index. Usualy index scan is less expensive than a table scan because index is more flat than a table
+25. Difference between Union and JOIN
+JOIN	UNION
+JOIN combines data from many tables based on a matched condition between them	SQL combines the result-set of two or more SELECT statements.
+It combines data into new columns.	It combines data into new rows
+Number of columns selected from each table may not be same.	Number of columns selected from each table should be same.
+Datatypes of corresponding columns selected from each table can be different.	Datatypes of corresponding columns selected from each table should be same.
+It may not return distinct columns.	It returns distinct rows.
+
