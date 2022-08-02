@@ -6,16 +6,16 @@
 select ProductID, Name, Color, ListPrice from Production.Product
 
 --2. Write a query that retrieves the columns ProductID, Name, Color and ListPrice from the Production.Product table, excluding the rows that ListPrice is 0.
-select ProductID, Name, Color, ListPrice from Production.Product where ListPrice !=0
+SELECT ProductID, Name, Color, ListPrice FROM Production.Product WHERE ListPrice !=0
 
 --3. Write a query that retrieves the columns ProductID, Name,
 --Color and ListPrice from the Production.Product table, the rows that are not NULL for the Color column.
-select ProductID, Name, Color, ListPrice from Production.Product where Color is not null
+SELECT ProductID, Name, Color, ListPrice FROM Production.Product WHERE Color IS NOT NULL
 
 --4. Write a query that retrieves the columns ProductID, Name,
 --Color and ListPrice from the Production.Product table, the rows that are not NULL for the column Color, and the column ListPrice has a value greater than zero.
 
-select ProductID, Name, Color, ListPrice from Production.Product where Color is not null and  ListPrice > 0
+SELECT ProductID, Name, Color, ListPrice FROM Production.Product WHERE Color IS NOT NULL AND  ListPrice > 0
 
 --5. Write a query that concatenates the columns Name and Color
 --from the Production.Product table by excluding the rows that are null for color.
